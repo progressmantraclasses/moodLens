@@ -11,6 +11,15 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const NEWS_API_KEY = process.env.NEWS_API_KEY;
 
+// Configure CORS to allow requests from your frontend
+const corsOptions = {
+  origin: "*", // Replace with your frontend URL
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type"]
+};
+
+app.use(cors(corsOptions));
+app.use(express.json());
 
 const SOURCES = [
   "cnn",
@@ -22,9 +31,6 @@ const SOURCES = [
   "fox-news",
   "the-times-of-india",
 ];
-
-app.use(cors());
-app.use(express.json());
 
 function simpleSummarize(text, numSentences = 2) {
   const sentences = text.split(". ");
@@ -51,7 +57,6 @@ app.get("/news", async (req, res) => {
           ? "Negative"
           : "Neutral";
 
-      // Use the fallback summarizer
       let summary = "No summary available";
       if (description.length > 50) {
         try {
@@ -76,3 +81,4 @@ app.get("/news", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
